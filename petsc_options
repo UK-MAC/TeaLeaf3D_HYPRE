@@ -1,0 +1,17 @@
+# PPCG with Chebyshev polynomials
+#export PETSC_OPTIONS="-ksp_type fcg -pc_type ksp -ksp_ksp_type chebyshev -ksp_pc_type bjacobi -ksp_sub_pc_type ilu -ksp_ksp_max_it 10 -ksp_ksp_chebyshev_eigenvalues 0.01,2.00 "
+
+# FCG + GAMAG (cg+cheb) change -mg_levels_ksp_ksp_max_it (2 is best)
+#export PETSC_OPTIONS="-ksp_type fcg  -pc_type gamg   -pc_mg_type kaskade  -mg_levels_ksp_type cg  -mg_levels_pc_type ksp -mg_levels_ksp_ksp_type chebyshev   -mg_levels_ksp_ksp_max_it 2  -pc_gamg_reuse_interpolation true  -pc_mg_smoothup 1 -pc_mg_smoothdown 1"
+
+# Regular PCG with block jacobi
+#export PETSC_OPTIONS=" -ksp_type cg" # -options_left -ksp_view"
+
+# transport free QMR with ASM, used by IBM for their own solver comparison
+#export PETSC_OPTIONS=" -ksp_type tfqmr -pc_type asm  -options_left -ksp_view -log_view "
+
+# PCG with Additive schwarz
+export PETSC_OPTIONS=" -ksp_type fcg -pc_type asm -sub_pc_type ilu" # -options_left -ksp_view"
+
+# AMG with Jacobi/ Richardson
+#export PETSC_OPTIONS = "-ksp_type cg  -pc_type gamg -pc_mg_type kaskade  -mg_levels_ksp_type richardson  -mg_levels_pc_type jacobi   -mg_levels_ksp_richardson_scale 0.9  -mg_coarse_pc_type jacobi -mg_coarse_ksp_type richardson  -mg_levels_ksp_max_it 4  -pc_gamg_reuse_interpolation true  -log_summary -options_left  -pc_mg_log"

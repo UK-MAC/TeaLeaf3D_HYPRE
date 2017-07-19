@@ -1,0 +1,170 @@
+ 
+   Tea Version    1.100
+       MPI Version
+    OpenMP Version
+   Task Count      3
+ Thread Count:     1
+ 
+ Tea will run from the following input:-
+ 
+*tea                                                                                                
+!Input state                                                                                        
+state 1 density=100.0 energy=0.0001                                                                 
+state 2 density=0.1 energy=25.0 geometry=cuboid xmin=1.0 xmax=2.0 ymin=1.0 ymax=2.0 zmin=0.0 zmax=1.
+state 3 density=0.1 energy=0.1 geometry=cuboid xmin=1.0 xmax=2.0 ymin=1.0 ymax=2.0 zmin=1.0 zmax=6.0
+state 4 density=0.1 energy=0.1 geometry=cuboid xmin=2.0 xmax=6.0 ymin=1.0 ymax=2.0 zmin=5.0 zmax=6.0
+state 5 density=0.1 energy=0.1 geometry=cuboid xmin=5.0 xmax=6.0 ymin=1.0 ymax=8.0 zmin=5.0 zmax=6.0
+state 6 density=0.1 energy=0.1 geometry=cuboid xmin=5.0 xmax=9.0 ymin=7.0 ymax=8.0 zmin=5.0 zmax=6.0
+state 7 density=0.1 energy=0.1 geometry=cuboid xmin=8.0 xmax=9.0 ymin=7.0 ymax=8.0 zmin=5.0 zmax=10.
+                                                                                                    
+! Grid information                                                                                  
+x_cells=125                                                                                         
+y_cells=125                                                                                         
+z_cells=125                                                                                         
+xmin=0.0                                                                                            
+ymin=0.0                                                                                            
+zmin=0.0                                                                                            
+xmax=10.0                                                                                           
+ymax=10.0                                                                                           
+zmax=10.0                                                                                           
+                                                                                                    
+! Timestep and solver info                                                                          
+initial_timestep=0.004                                                                              
+end_step=10                                                                                         
+tl_max_iters=10000                                                                                  
+test_problem 2                                                                                      
+                                                                                                    
+use_hypre                                                                                           
+tl_solver_type=2                                                                                    
+                                                                                                    
+                                                                                                    
+!tl_use_cg                                                                                          
+tl_preconditioner_type = none                                                                       
+tl_eps=1.0e-15                                                                                      
+                                                                                                    
+!visit_frequency=1                                                                                  
+!halo_depth=1                                                                                       
+*tea                                                                                                
+ 
+ Initialising and generating
+ 
+ Reading input file
+ 
+ Reading specification for state            1
+ 
+            state density   0.1000E+03
+             state energy   0.1000E-03
+ 
+ Reading specification for state            2
+ 
+            state density   0.1000E+00
+             state energy   0.2500E+02
+ state geometry rectangular
+               state xmin   0.1000E+01
+               state xmax   0.2000E+01
+               state ymin   0.1000E+01
+               state ymax   0.2000E+01
+               state zmin   0.0000E+00
+               state zmax   0.1000E+01
+ 
+ Reading specification for state            3
+ 
+            state density   0.1000E+00
+             state energy   0.1000E+00
+ state geometry rectangular
+               state xmin   0.1000E+01
+               state xmax   0.2000E+01
+               state ymin   0.1000E+01
+               state ymax   0.2000E+01
+               state zmin   0.1000E+01
+               state zmax   0.6000E+01
+ 
+ Reading specification for state            4
+ 
+            state density   0.1000E+00
+             state energy   0.1000E+00
+ state geometry rectangular
+               state xmin   0.2000E+01
+               state xmax   0.6000E+01
+               state ymin   0.1000E+01
+               state ymax   0.2000E+01
+               state zmin   0.5000E+01
+               state zmax   0.6000E+01
+ 
+ Reading specification for state            5
+ 
+            state density   0.1000E+00
+             state energy   0.1000E+00
+ state geometry rectangular
+               state xmin   0.5000E+01
+               state xmax   0.6000E+01
+               state ymin   0.1000E+01
+               state ymax   0.8000E+01
+               state zmin   0.5000E+01
+               state zmax   0.6000E+01
+ 
+ Reading specification for state            6
+ 
+            state density   0.1000E+00
+             state energy   0.1000E+00
+ state geometry rectangular
+               state xmin   0.5000E+01
+               state xmax   0.9000E+01
+               state ymin   0.7000E+01
+               state ymax   0.8000E+01
+               state zmin   0.5000E+01
+               state zmax   0.6000E+01
+ 
+ Reading specification for state            7
+ 
+            state density   0.1000E+00
+             state energy   0.1000E+00
+ state geometry rectangular
+               state xmin   0.8000E+01
+               state xmax   0.9000E+01
+               state ymin   0.7000E+01
+               state ymax   0.8000E+01
+               state zmin   0.5000E+01
+               state zmax   0.1000E+02
+ 
+                   x_cells         125
+                   y_cells         125
+                   z_cells         125
+                      xmin  0.0000E+00
+                      ymin  0.0000E+00
+                      zmin  0.0000E+00
+                      xmax  0.1000E+02
+                      ymax  0.1000E+02
+                      zmax  0.1000E+02
+         initial_timestep   0.4000E-02
+                  end_step          10
+              test_problem           2
+ 
+ Using Fortran Kernels
+ 
+ Input read finished.
+ 
+ Setting up initial geometry
+ 
+ 
+ Decomposing the mesh into            1  by            1  by            3  chunk
+ s
+ 
+ Generating chunks
+ 
+ Problem initialised and generated
+ 
+ Time   0.000000000000000E+000
+                                 Volume                      Mass                   Density                    Energy                         U
+ step:      0   0.99999999999840838E+03   0.97510485607173352E+05   0.97510485607328548E+02   0.12585456639973309E+02   0.97536340172626319E+03
+ 
+ Starting the calculation
+ Step       1 time   0.0000000 timestep   4.00E-03
+ Wall clock    2.33852481842041     
+ Average time per cell   1.496655883789062E-004
+ Step time per cell      1.495272827148437E-004
+ Step       2 time   0.0040000 timestep   4.00E-03
+ Wall clock    4.63404393196106     
+ Average time per cell   1.482894058227539E-004
+ Step time per cell      1.468992004394531E-004
+ Step       3 time   0.0080000 timestep   4.00E-03
