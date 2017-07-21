@@ -136,7 +136,7 @@ PETSC_DIR=${COM_PATH_P}/arch-linux2-c-opt
 PETSC_DIR_F=${COM_PATH_P}
 PETSC_LIB=-L${PETSC_DIR}/lib -lpetsc
 PETSC_INC=-I${PETSC_DIR}/include -I${PETSC_DIR_F}/include/
-REQ_LIB=-lstdc++
+REQ_LIB=-lstdc++ -lmpi_cxx
 
 ifdef NO_PETSC 
   COM_PATH_P=
