@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#define ARRAY3D(i,j,k,imin,jmin,kmin,ni,nj) ( i-(imin) )+( ( (j)-(jmin) )*(ni) ) + ( ( (k)-(kmin) )*(ni*nj) ) 
+#define ARRAY3D(i,j,k,imin,jmin,kmin,ni,nj) (i-(imin))+(((j)-(jmin))*(ni))+(((k)-(kmin))*(ni*nj))
 #define EXTERNAL_FACE -1
 
 // 3D version
@@ -380,12 +380,13 @@ void HypreStem::solve(
 	     * 
              */
             double c2 = Kx[ARRAY3D(j,k,l,left-2,bottom-2,back-2,nx,ny)];
+
             double c3 = Kx[ARRAY3D(j+1,k,l,left-2,bottom-2,back-2,nx,ny)];
             double c4 = Ky[ARRAY3D(j,k,l,left-2,bottom-2,back-2,nx,ny)];
             double c5 = Ky[ARRAY3D(j,k+1,l,left-2,bottom-2,back-2,nx,ny)];
-            double c6 = Ky[ARRAY3D(j,k,l,left-2,bottom-2,back-2,nx,ny)];
-            double c7 = Ky[ARRAY3D(j,k,l+1,left-2,bottom-2,back-2,nx,ny)];    
-    
+            double c6 = Kz[ARRAY3D(j,k,l,left-2,bottom-2,back-2,nx,ny)];
+            double c7 = Kz[ARRAY3D(j,k,l+1,left-2,bottom-2,back-2,nx,ny)];    
+
             //coefficients[n] = (1.0+(2.0*(0.5*(c2+c3))*rx)+(2.0*(0.5*(c4+c5))*ry));
             coefficients[n+1] = (-1.0*rx)*c2;
             coefficients[n+2] = (-1.0*rx)*c3;
@@ -458,7 +459,7 @@ void HypreStem::solve(
     HYPRE_StructVectorSetBoxValues(b, ilower, iupper, values);
 
     n = 0;
-    for (int k = bottom; k <= top; k++) {
+    for (int k = back; k <= front; k++) {
       for (int j = bottom; j <= top; j++) {
         for (int i = left; i <= right; i++) {
             values[n] = u0[ARRAY3D(i,j,k,xmn,ymn,zmn,nx,ny)];
@@ -510,7 +511,7 @@ void HypreStem::solve(
     HYPRE_StructVectorGetBoxValues(x, ilower, iupper, values);
 
     n = 0;
-    for (int k = bottom; k <= top; k++) {
+    for (int k = back; k <= front; k++) {
       for (int j = bottom; j <= top; j++) {
         for (int i = left; i <= right; i++) {
             u0[ARRAY3D(i,j,k,xmn,ymn,zmn,nx,ny)] = values[n];

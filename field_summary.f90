@@ -2,17 +2,17 @@
 !
 ! This file is part of TeaLeaf.
 !
-! TeaLeaf is free software: you can redistribute it and/or modify it under 
-! the terms of the GNU General Public License as published by the 
-! Free Software Foundation, either version 3 of the License, or (at your option) 
+! TeaLeaf is free software: you can redistribute it and/or modify it under
+! the terms of the GNU General Public License as published by the
+! Free Software Foundation, either version 3 of the License, or (at your option)
 ! any later version.
 !
-! TeaLeaf is distributed in the hope that it will be useful, but 
-! WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
-! FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more 
+! TeaLeaf is distributed in the hope that it will be useful, but
+! WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+! FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 ! details.
 !
-! You should have received a copy of the GNU General Public License along with 
+! You should have received a copy of the GNU General Public License along with
 ! TeaLeaf. If not, see http://www.gnu.org/licenses/.
 
 !>  @brief Driver for the field summary kernels
@@ -57,9 +57,10 @@ SUBROUTINE field_summary()
                                   chunks(c)%field%y_max,                   &
                                   chunks(c)%field%z_min,                   &
                                   chunks(c)%field%z_max,                   &
+                                  halo_exchange_depth,                     &
                                   chunks(c)%field%volume,                  &
                                   chunks(c)%field%density,                 &
-                                  chunks(c)%field%energy0,                 &
+                                  chunks(c)%field%energy1,                 &
                                   chunks(c)%field%u,                       &
                                   vol,mass,ie,temp                         )
       ENDIF
@@ -77,10 +78,12 @@ SUBROUTINE field_summary()
 !$  IF(OMP_GET_THREAD_NUM().EQ.0) THEN
       WRITE(g_out,'(a6,i7,5e26.17)')' step:',step,vol,mass,mass/vol,ie,temp
       WRITE(g_out,*)
+      CALL FLUSH(g_out)
 !$  ENDIF
   ENDIF
 
   !Check if this is the final call and if it is a test problem, check the result.
+  
   IF(complete) THEN
     IF(parallel%boss) THEN
 !$    IF(OMP_GET_THREAD_NUM().EQ.0) THEN

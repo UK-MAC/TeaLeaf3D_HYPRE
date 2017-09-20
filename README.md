@@ -1,16 +1,8 @@
-## PETSc
-
-- Download a copy of PETSc from mcs.anl.gov/petsc/, we use version 3.5.2
-- Extract the downloaded copy of PETSc, and copy in the `build-petsc.sh` found in the TeaLeaf repository.
-- Edit the `build-petsc.sh` script and change the BLAS_DIR, MPI_DIR and INSTALL_DIR environment variables.
-  - If you are only building PETSc for use with TeaLeaf, the consider installing to `libs/petsc` in the TeaLeaf directory.
-- Run the script to build and install PETSc.
-
 # TeaLeaf
 
 ## Compling
 
-- In many case just typing `make` in the required software version will work. This is the case when the mpif90 and mpicc scripts point to the correct compilers and the required libraries are already in the user path.
+In many cases just typing `make` in the required software version will work. This is the case when the mpif90 and mpicc scripts point to the correct compilers.
 
 If the MPI compilers have different names then the build process needs to 
 notified of this by defining two environment variables, `MPI_COMPILER` and 
@@ -27,8 +19,6 @@ Or on Cray systems:
 Or on GNU:
 
 `make MPI_COMPILER=gfortran C_MPI_COMPILER=gcc`
-
-Often, you will need to point to the location of libraries if not loaded via modules. 
 
 ### OpenMP Build
 
@@ -61,8 +51,8 @@ The default flags for each of these is show below:-
 * XL: -O5
 * PATHSCLE: -O3
 * PGI: -O3 -Minline
-* CRAY: -em  _Note: that by default the Cray compiler with pick the optimum 
-options for performance._
+* CRAY: -em  Note: that by default the Cray compiler with pick the optimum 
+options for performance.
 
 ### Other Flags
 
@@ -101,7 +91,7 @@ flags, `OPTIONS` and `C_OPTIONS`, one for the Fortran and one for the C options.
 
 `make COMPILER=INTEL OPTIONS=-xavx C_OPTIONS=-xavx`
 
-A `DEBUG` flag can be set to use debug options for a specific compiler.
+Finally, a `DEBUG` flag can be set to use debug options for a specific compiler.
 
 `make COMPILER=PGI DEBUG=1`
 
@@ -111,12 +101,9 @@ environment variable.
 So on a system without the standard MPI wrappers, for a build that requires 
 OpenMP, IEEE and AVX this would look like so:-
 
-```
+
 make COMPILER=INTEL MPI_COMPILER=mpiifort C_MPI_COMPILER=mpiicc IEEE=1 \
 OPTIONS="-xavx" C_OPTIONS="-xavx"
-```
-
-If PETSc is not available on your system them it is possible to make TeaLeaf with the reference solvers by specifying the make with NO_PETSC=1.
 
 ### File Input
 
@@ -146,13 +133,19 @@ In the event that both the above options are set, the simulation will terminate 
 
 `ymax <R>`
 
-The above four options set the size of the computational domain. The default domain size is a 10cm square. 
+`zmin <R>`
+
+`zmax <R>`
+
+The above six options set the size of the computational domain. The default domain size is a 10cm cube. 
 
 `x_cells <I>`
 
 `y_cells <I>`
 
-The two options above set the cell count for each coordinate direction. The default is 10 cells in each direction.
+`z_cells <I>`
+
+The three options above set the cell count for each coordinate direction. The default is 10 cells in each direction.
 
 The geometric information and initial conditions are set using the following keywords with three possible variations. Note that state 1 is always the ambient material and any geometry information is ignored. Areas not covered by other defined states receive the energy and density of state 1.
 
@@ -198,9 +191,13 @@ Default error to switch from CG to Chebyshev when using Chebyshev solver with th
 
 After the solver reaches convergence, calculate ||b-Ax|| to make sure the solver has actually converged. The default for this option is off.
 
-`tl_preconditioner_on`
+`tl_preconditioner_type`
 
-This keyword invokes the pre-conditioner. The only pre-conditioner available is a diagonal scaling. This is a simple precoditioner and may not accelerate the time to solution or reduce the iteration count. By default, no pre-conditioner is used.
+This keyword invokes the pre-conditioner. Options are:
+
+* `none` - No preconditioner.
+* `jac_diag` - Diagonal Jacobi preconditioner. Typically reduces condition number by around 5% but may not reduce time to solution
+* `jac_block` - Block Jacobi preconditioner (with a currently hardcoded block size of 4). Typically reduces the condition number by around 50% but may not reduce time to solution
 
 `tl_use_jacobi`
 
@@ -212,7 +209,7 @@ This keyword selects the Conjugate Gradient method to solve the linear system.
 
 `tl_use_ppcg`
 
-This keyword selects the Conjugate Gradient method to solve the linear system.
+This keyword selects the Polynomially preconditioned Conjugate Gradient method to solve the linear system.
 
 `tl_use_chebyshev`
 
@@ -235,11 +232,11 @@ This option provides an upper limit of the number of iterations used for the lin
 
 This option sets the convergence criteria for the selected solver. It uses a least squares measure of the residual. The default value is 1.0e-10.
 
-`tl_coefficient_density
+`tl_coefficient_density`
 
 This option uses the density as the conduction coefficient. This is the default option.
 
-`tl_coefficient_inverrse_density
+`tl_coefficient_inverrse_density`
 
 This option uses the inverse density as the conduction coefficient.
 

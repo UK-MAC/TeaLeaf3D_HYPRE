@@ -2,17 +2,17 @@
 #
 # This file is part of TeaLeaf.
 #
-# TeaLeaf is free software: you can redistribute it and/or modify it under 
-# the terms of the GNU General Public License as published by the 
-# Free Software Foundation, either version 3 of the License, or (at your option) 
+# TeaLeaf is free software: you can redistribute it and/or modify it under
+# the terms of the GNU General Public License as published by the
+# Free Software Foundation, either version 3 of the License, or (at your option)
 # any later version.
 #
-# TeaLeaf is distributed in the hope that it will be useful, but 
-# WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
-# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more 
+# TeaLeaf is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
 # details.
 #
-# You should have received a copy of the GNU General Public License along with 
+# You should have received a copy of the GNU General Public License along with
 # TeaLeaf. If not, see http://www.gnu.org/licenses/.
 
 #  @brief Makefile for TeaLeaf
@@ -76,22 +76,21 @@ ifndef COMPILER
   MESSAGE=select a compiler to compile in OpenMP, e.g. make COMPILER=INTEL
 endif
 
-OMP_INTEL     = -qopenmp
+OMP_INTEL     = -qopenmp -ip -g
 OMP_SUN       = -xopenmp=parallel -vpara
 OMP_GNU       = -fopenmp
 OMP_CRAY      = -e Z
 OMP_PGI       = -mp=nonuma
 OMP_PATHSCALE = -mp
 OMP_XL        = -qsmp=omp -qthreaded
-OMP=$(OMP_$(COMPILER))
 
-FLAGS_INTEL     = -O3 -no-prec-div -fpp
+FLAGS_INTEL     = -O3 -no-prec-div -fpp -align array64byte
 FLAGS_SUN       = -fast -xipo=2 -Xlistv4
-FLAGS_GNU       = -O3 -march=native -funroll-loops
+FLAGS_GNU       = -O3 -march=native -funroll-loops -cpp -ffree-line-length-none
 FLAGS_CRAY      = -em -ra -h acc_model=fast_addr:no_deep_copy:auto_async_all
 FLAGS_PGI       = -fastsse -gopt -Mipa=fast -Mlist
 FLAGS_PATHSCALE = -O3
-FLAGS_XL       = -O5 -qipa=partition=large -g -qfullpath -Q -qsigtrap -qextname=flush:timer_c:unpack_top_bottom_buffers_c:pack_top_bottom_buffers_c:unpack_left_right_buffers_c:pack_left_right_buffers_c:field_summary_kernel_c:update_halo_kernel_c:generate_chunk_kernel_c:initialise_chunk_kernel_c:calc_dt_kernel_c -qlistopt -qattr=full -qlist -qreport -qxref=full -qsource -qsuppress=1506-224:1500-036
+FLAGS_XL       = -O5 -qipa=partition=large -g -qfullpath -Q -qsigtrap -qextname=flush:ideal_gas_kernel_c:viscosity_kernel_c:pdv_kernel_c:revert_kernel_c:accelerate_kernel_c:flux_calc_kernel_c:advec_cell_kernel_c:advec_mom_kernel_c:reset_field_kernel_c:timer_c:unpack_top_bottom_buffers_c:pack_top_bottom_buffers_c:unpack_left_right_buffers_c:pack_left_right_buffers_c:field_summary_kernel_c:update_halo_kernel_c:generate_chunk_kernel_c:initialise_chunk_kernel_c:calc_dt_kernel_c -qlistopt -qattr=full -qlist -qreport -qxref=full -qsource -qsuppress=1506-224:1500-036
 FLAGS_          = -O3
 CFLAGS_INTEL     = -O3 -no-prec-div -restrict -fno-alias
 CFLAGS_SUN       = -fast -xipo=2
@@ -109,7 +108,7 @@ ifdef DEBUG
   FLAGS_CRAY      = -O0 -g -em -eD
   FLAGS_PGI       = -O0 -g -C -Mchkstk -Ktrap=fp -Mchkfpstk -Mchkptr
   FLAGS_PATHSCALE = -O0 -g
-  FLAGS_XL       = -O0 -g -qfullpath -qcheck -qflttrap=ov:zero:invalid:en -qsource -qinitauto=FF -qmaxmem=-1 -qinit=f90ptr -qsigtrap -qextname=flush:timer_c:unpack_top_bottom_buffers_c:pack_top_bottom_buffers_c:unpack_left_right_buffers_c:pack_left_right_buffers_c:field_summary_kernel_c:update_halo_kernel_c:generate_chunk_kernel_c:initialise_chunk_kernel_c:calc_dt_kernel_c
+  FLAGS_XL       = -O0 -g -qfullpath -qcheck -qflttrap=ov:zero:invalid:en -qsource -qinitauto=FF -qmaxmem=-1 -qinit=f90ptr -qsigtrap -qextname=flush:ideal_gas_kernel_c:viscosity_kernel_c:pdv_kernel_c:revert_kernel_c:accelerate_kernel_c:flux_calc_kernel_c:advec_cell_kernel_c:advec_mom_kernel_c:reset_field_kernel_c:timer_c:unpack_top_bottom_buffers_c:pack_top_bottom_buffers_c:unpack_left_right_buffers_c:pack_left_right_buffers_c:field_summary_kernel_c:update_halo_kernel_c:generate_chunk_kernel_c:initialise_chunk_kernel_c:calc_dt_kernel_c
   FLAGS_          = -O0 -g
   CFLAGS_INTEL    = -O0 -g -debug all -traceback
   CFLAGS_SUN      = -g -O0 -xopenmp=noopt -stackvar -u -fpover=yes -C -ftrap=common
@@ -128,7 +127,10 @@ ifdef IEEE
   I3E_PGI       = -Kieee
   I3E_PATHSCALE = -mieee-fp
   I3E_XL       = -qfloat=nomaf
-  I3E=$(I3E_$(COMPILER))
+endif
+
+ifneq (,$(filter $(COMPILER), GNU INTEL))
+OMP4=-D WITH_OMP4
 endif
 
 PETSC_SOURCE=PetscLeaf.F90
@@ -136,7 +138,7 @@ PETSC_DIR=${COM_PATH_P}/arch-linux2-c-opt
 PETSC_DIR_F=${COM_PATH_P}
 PETSC_LIB=-L${PETSC_DIR}/lib -lpetsc
 PETSC_INC=-I${PETSC_DIR}/include -I${PETSC_DIR_F}/include/
-REQ_LIB=-lstdc++ -lmpi_cxx
+REQ_LIB=-lstdc++
 
 ifdef NO_PETSC 
   COM_PATH_P=
@@ -147,59 +149,75 @@ ifdef NO_PETSC
   PETSC_LIB=
 endif
 
-FLAGS=${FLAGS_$(COMPILER)} ${OMP} ${I3E} ${OPTIONS} ${PETSC_INC} $(REQ_LIB)
-CFLAGS=${CFLAGS_$(COMPILER)} ${OMP} ${I3E} ${C_OPTIONS} ${PETSC_INC} -I$(HYPRE_DIR)/include -c
+FLAGS=$(FLAGS_$(COMPILER)) $(OMP_$(COMPILER)) $(I3E_$(COMPILER)) $(OPTIONS)  ${PETSC_INC} $(REQ_LIB) $(OMP4)
+CFLAGS=$(CFLAGS_$(COMPILER)) $(OMP_$(COMPILER)) $(I3E_$(COMPILER)) $(C_OPTIONS) ${PETSC_INC} -I$(HYPRE_DIR)/include -c
 MPI_COMPILER=mpif90
 C_MPI_COMPILER=mpicc
 CXX_MPI_COMPILER=mpicxx
 
-tea_leaf: HypreStem.o timer_c.o *.f90 Makefile
+C_FILES=\
+	timer_c.o	\
+	
+CXX_FILES=\
+	HypreStem.o	\
+	
+FORTRAN_FILES=\
+	data.o			\
+	definitions.o			\
+	pack.o			\
+	pack_kernel.o			\
+	tea.o				\
+	report.o			\
+	timer.o			\
+	parse.o			\
+	read_input.o			\
+	initialise_chunk_kernel.o	\
+	initialise_chunk.o		\
+	build_field.o			\
+	update_halo_kernel.o		\
+	update_halo.o			\
+	start.o			\
+	generate_chunk_kernel.o	\
+	generate_chunk.o		\
+	initialise.o			\
+	field_summary_kernel.o	\
+	field_summary.o		\
+	calc_dt.o			\
+	timestep.o			\
+	set_field_kernel.o            \
+	set_field.o                   \
+	tea_leaf_common_kernels.o             \
+	tea_leaf_jacobi.o             \
+	tea_leaf_cg.o             	\
+	tea_leaf_cheby.o             	\
+	tea_leaf_ppcg.o             	\
+	tea_solve.o                   \
+	visit.o			\
+	tea_leaf.o			\
+	diffuse.o
+
+tea_leaf: Makefile $(C_FILES) $(CXX_FILES) $(FORTRAN_FILES) 
 	$(MPI_COMPILER) $(FLAGS)	\
-	data.f90			\
-	definitions.f90			\
-	${PETSC_SOURCE}		        \
-	pack_kernel.f90			\
-	tea.f90				\
-	report.f90			\
-	timer.f90			\
-	parse.f90			\
-	read_input.f90			\
-	initialise_chunk_kernel.f90	\
-	initialise_chunk.f90		\
-	build_field.f90			\
-	update_halo_kernel.f90		\
-	update_halo.f90			\
-	start.f90			\
-	generate_chunk_kernel.f90	\
-	generate_chunk.f90		\
-	initialise.f90			\
-	field_summary_kernel.f90	\
-	field_summary.f90		\
-	calc_dt_kernel.f90		\
-	calc_dt.f90			\
-	timestep.f90			\
-	set_field_kernel.f90		\
-	set_field.f90			\
-	tea_leaf_jacobi.f90             \
-	tea_leaf_cg.f90			\
-	tea_leaf_cheby.f90              \
-	tea_leaf_ppcg.f90               \
-	tea_solve.f90                   \
-	visit.f90			\
-	tea_leaf.f90			\
-	diffuse.f90                     \
-	timer_c.o                       \
-	HypreStem.o                     \
+	$(C_FILES)	\
+	$(CXX_FILES)	\
+	$(FORTRAN_FILES)	\
+	$(LDFLAGS) \
+	$(LDLIBS) \
 	$(HYPRE_DIR)/lib/libHYPRE.a     \
 	$(PETSC_LIB)   			\
 	$(REQ_LIB)			\
 	-o tea_leaf; echo $(MESSAGE)
 
-timer_c.o: timer_c.c
-	$(C_MPI_COMPILER) $(CFLAGS) timer_c.c
+include makefile.deps
 
-HypreStem.o : HypreStem.C HypreStem.h
-	$(CXX_MPI_COMPILER) $(CFLAGS) HypreStem.C
-
+%_module.mod: %.f90 %.o
+	@true
+%.o: %.f90 Makefile makefile.deps
+	$(MPI_COMPILER) $(FLAGS) -c $< -o $*.o
+%.o: %.c Makefile makefile.deps
+	$(C_MPI_COMPILER) $(CFLAGS) -c $< -o $*.o
+%.o: %.C Makefile makefile.deps
+	$(CXX_MPI_COMPILER) $(CFLAGS) -c $< -o $*.o
+	
 clean:
-	rm -f *.o *.mod *genmod* *.lst *.cub *.ptx tea_leaf
+	rm -f *.o *.mod *genmod* *.lst *.cub *.ptx tea_leaf *.s *.i
